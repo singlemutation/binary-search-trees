@@ -93,6 +93,45 @@ class Tree
     end
   end
 
+  def preorder(node = @root, arr = [], &block)
+    return if node.nil?
+
+    arr << node
+    preorder(node.left, arr)
+    preorder(node.right, arr)
+    if block_given?
+      arr.each(&block)
+    else
+      arr.map(&:data)
+    end
+  end
+
+  def inorder(node = @root, arr = [], &block)
+    return if node.nil?
+
+    inorder(node.left, arr)
+    arr << node
+    inorder(node.right, arr)
+    if block_given?
+      arr.each(&block)
+    else
+      arr.map(&:data)
+    end
+  end
+
+  def postorder(node = @root, arr = [], &block)
+    return if node.nil?
+
+    postorder(node.left, arr)
+    postorder(node.right, arr)
+    arr << node
+    if block_given?
+      arr.each(&block)
+    else
+      arr.map(&:data)
+    end
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -104,4 +143,10 @@ end
 
 # tree = Tree.new(random_array)
 tree = Tree.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
-tree.pretty_print
+# tree.pretty_print
+arr = []
+tree.preorder do |item|
+  arr << item.data * 2
+end
+p arr
+p tree.preorder
