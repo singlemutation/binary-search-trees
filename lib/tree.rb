@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'node'
+#
 # Create binary search tree
 class Tree
   attr_accessor :data, :root
@@ -132,21 +132,42 @@ class Tree
     end
   end
 
+  def height(node = @root, count = -1)
+    return count if node.nil?
+
+    count += 1
+    [height(node.left, count), height(node.right, count)].max
+  end
+
+  def depth(key, node = @root, depth = 0)
+    return if node.nil?
+    return depth if node.data == key
+
+    if key < node.data
+      depth += 1
+      node.left = depth(key, node.left, depth)
+    elsif key > node.data
+      depth += 1
+      node.right = depth(key, node.right, depth)
+    end
+  end
+
+  def balanced?(node = @root)
+    return true if node.nil?
+
+    return true if (height(node.right) - height(node.left)).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+
+    false
+  end
+
+  def rebalance
+    self.data = inorder
+    self.root = build_tree(data)
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 end
-
-# random_array = Array.new(15) { rand(1..100) }
-
-# tree = Tree.new(random_array)
-tree = Tree.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
-# tree.pretty_print
-arr = []
-tree.preorder do |item|
-  arr << item.data * 2
-end
-p arr
-p tree.preorder
